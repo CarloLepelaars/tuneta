@@ -1,11 +1,6 @@
-# from tuneta.optimize import _weighted_spearman
 import re
-
 import dcor
-import numpy as np
 import pandas as pd
-from scipy.spatial.distance import pdist, squareform
-from tabulate import tabulate
 
 
 def col_name(function, study_best_params):
@@ -43,11 +38,9 @@ def remove_consecutive_duplicates_and_nans(s):
     return s.loc[(shifted != s) & ~(shifted.isna() & s.isna())]
 
 
-# import seaborn as sns
-# import matplotlib.pyplot as plt
-
-
 def gen_plot(indicators, title):
+    import seaborn as sns
+    import matplotlib.pyplot as plt
     data = pd.DataFrame()
     for fitted in indicators.fitted:
         fitted.fitness = []

@@ -1,11 +1,9 @@
 import inspect
 import itertools
-import multiprocessing
 import re
 from collections import OrderedDict
 from datetime import datetime
 
-import joblib
 import numpy as np
 import pandas as pd
 import pandas_ta as pta
@@ -14,6 +12,8 @@ from finta import TA as fta
 from joblib import Parallel, delayed
 from scipy.spatial.distance import squareform
 from tabulate import tabulate
+from sklearn.utils.validation import check_is_fitted
+from sklearn.base import BaseEstimator, TransformerMixin
 
 from tuneta.config import *
 from tuneta.optimize import Optimize
@@ -29,8 +29,9 @@ def dc(p0, p1):
     return res
 
 
-class TuneTA:
+class TuneTA(BaseEstimator, TransformerMixin):
     def __init__(self, n_jobs=1, verbose=False):
+        super().__init__()
         self.fitted = []
         self.n_jobs = n_jobs
         self.verbose = verbose
@@ -443,5 +444,8 @@ class TuneTA:
             ).sort_values(by=["Correlation"], ascending=False)
             target_correlation = target_correlation.head(top_post)
             columns = target_correlation.index.values
-
         return columns
+    
+    def get_feature_names_out(self, input_features=None):
+        check_is_fitted(self)
+        return [str(f.__name__) for f in self.fitted] if not input_features else input_features
